@@ -37,6 +37,8 @@
   font-size: 13px;
   margin-bottom: 16px;
   font-family: inherit;
+  cursor: text;
+  caret-color: #cccccc;
 }
 
 .input-dialog-input:focus {

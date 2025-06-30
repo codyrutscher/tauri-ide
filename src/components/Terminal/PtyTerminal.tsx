@@ -55,6 +55,7 @@ export const Terminal: React.FC<TerminalProps> = ({ workingDirectory, onOutput }
           background: '#1e1e1e',
           foreground: '#cccccc',
           cursor: '#ffffff',
+          cursorAccent: '#1e1e1e',
           black: '#000000',
           red: '#cd3131',
           green: '#0dbc79',
@@ -76,6 +77,7 @@ export const Terminal: React.FC<TerminalProps> = ({ workingDirectory, onOutput }
         fontFamily: 'Menlo, Monaco, "Courier New", monospace',
         cursorBlink: true,
         cursorStyle: 'block',
+        cursorWidth: 2,
       });
 
       const fitAddon = new FitAddon();

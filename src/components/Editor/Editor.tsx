@@ -9,9 +9,10 @@ interface EditorComponentProps {
   rootPath?: string | null;
   onSave?: (content: string) => void;
   onModifiedChange?: (filePath: string, isModified: boolean) => void;
+  theme?: string;
 }
 
-export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, rootPath, onSave, onModifiedChange }) => {
+export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, rootPath, onSave, onModifiedChange, theme = 'vs-dark' }) => {
   const editorRef = useRef<any>(null);
   const [content, setContent] = useState('');
   const [originalContent, setOriginalContent] = useState('');
@@ -197,7 +198,7 @@ export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, root
         value={content}
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
-        theme="vs-dark"
+        theme={theme}
         options={{
           minimap: { enabled: true },
           fontSize: 14,

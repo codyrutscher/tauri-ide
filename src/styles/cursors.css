@@ -1,0 +1,120 @@
+/* Global cursor styles for better UX */
+
+/* Text inputs and editable areas */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+.monaco-editor .view-lines,
+.xterm-helper-textarea,
+.xterm-screen,
+[contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* Clickable elements */
+button,
+a,
+.clickable,
+.file-tree-item,
+.tab,
+.context-menu-item,
+.theme-selector,
+.theme-option,
+select,
+option {
+  cursor: pointer !important;
+}
+
+/* Disabled elements */
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled,
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+/* Resize handles */
+.resize-handle,
+.splitter {
+  cursor: ew-resize !important;
+}
+
+.resize-handle-vertical,
+.splitter-vertical {
+  cursor: ns-resize !important;
+}
+
+/* Loading states */
+.loading,
+.spinning {
+  cursor: wait !important;
+}
+
+/* Hover effects for better interactivity feedback */
+button:hover:not(:disabled),
+.file-tree-item:hover,
+.tab:hover,
+.context-menu-item:hover,
+.theme-option:hover {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+/* Focus styles for better accessibility */
+input:focus,
+textarea:focus,
+button:focus,
+select:focus,
+.monaco-editor.focused,
+.xterm-focus {
+  outline: 2px solid #007acc;
+  outline-offset: 1px;
+}
+
+/* Special cases */
+.file-tree-action-btn {
+  cursor: pointer !important;
+}
+
+.input-dialog input {
+  cursor: text !important;
+}
+
+.ai-chat-input {
+  cursor: text !important;
+}
+
+/* Terminal specific cursor */
+.xterm-cursor-layer {
+  cursor: text !important;
+}
+
+/* File tree empty state */
+.file-tree-empty {
+  cursor: default;
+}
+
+/* Drag and drop areas */
+.drop-zone {
+  cursor: copy;
+}
+
+/* Close buttons */
+.close-btn,
+.tab-close {
+  cursor: pointer !important;
+}
+
+/* Ensure cursor changes are applied */
+* {
+  cursor: inherit;
+}
+
+body {
+  cursor: default;
+}

@@ -37,4 +37,18 @@
   flex: 1;
   padding: 10px;
   overflow: hidden;
+  cursor: text;
+}
+
+/* Ensure terminal has text cursor */
+.terminal-content .xterm {
+  cursor: text !important;
+}
+
+.terminal-content .xterm-screen {
+  cursor: text !important;
+}
+
+.terminal-content .xterm-helper-textarea {
+  cursor: text !important;
 }

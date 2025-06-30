@@ -7,12 +7,14 @@ import { FileTree } from '../FileTree/FileTree';
 import { EditorComponent } from '../Editor/Editor';
 import { Terminal } from '../Terminal/PtyTerminal';
 import { AIChat } from '../AI/AIChat';
+import { ThemeSelector, EditorTheme } from '../ThemeSelector/ThemeSelector';
 import './Layout.css';
 
 export const Layout: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
   const [fileTreeRefreshTrigger, setFileTreeRefreshTrigger] = useState(0);
+  const [editorTheme, setEditorTheme] = useState<EditorTheme>('vs-dark');
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -116,10 +118,13 @@ export const Layout: React.FC = () => {
     <div className="ide-layout">
       <div className="ide-header">
         <h1>Cody Editor</h1>
-        <button className="open-folder-btn" onClick={handleOpenFolder}>
-          <FolderOpen size={16} />
-          <span>New Project</span>
-        </button>
+        <div className="ide-header-actions">
+          <ThemeSelector onThemeChange={setEditorTheme} />
+          <button className="open-folder-btn" onClick={handleOpenFolder}>
+            <FolderOpen size={16} />
+            <span>New Project</span>
+          </button>
+        </div>
       </div>
       <div className="ide-body">
         <Allotment>
@@ -138,6 +143,7 @@ export const Layout: React.FC = () => {
                     <EditorComponent 
                       filePath={selectedFile} 
                       rootPath={currentFolder}
+                      theme={editorTheme}
                       onSave={() => {
                         console.log('File saved');
                         // Trigger file tree refresh after save

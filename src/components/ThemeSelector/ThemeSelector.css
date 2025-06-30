@@ -1,0 +1,72 @@
+.theme-selector {
+  position: relative;
+}
+
+.theme-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #3c3c3c;
+  color: #cccccc;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-selector-button:hover {
+  background-color: #484848;
+  border-color: #585858;
+}
+
+.theme-selector-button:focus {
+  outline: 2px solid #007acc;
+  outline-offset: 1px;
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background-color: #252526;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.theme-option {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  color: #cccccc;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.theme-option:hover {
+  background-color: #094771;
+}
+
+.theme-option:focus {
+  outline: none;
+  background-color: #094771;
+}
+
+.theme-option.active {
+  background-color: #094771;
+  color: #ffffff;
+}
+
+.theme-option.active::before {
+  content: '✓';
+  margin-right: 8px;
+}

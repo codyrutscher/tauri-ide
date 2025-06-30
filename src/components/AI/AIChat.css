@@ -229,6 +229,8 @@
   resize: none;
   min-height: 36px;
   max-height: 120px;
+  cursor: text;
+  caret-color: #cccccc;
 }
 
 .ai-input:focus {
