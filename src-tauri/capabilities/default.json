@@ -8,9 +8,24 @@
     "core:event:default",
     "opener:default",
     "fs:default",
-    "fs:allow-read-text-file",
-    "fs:allow-write-text-file",
-    "fs:allow-read-dir",
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        { "path": "**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-text-file", 
+      "allow": [
+        { "path": "**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        { "path": "**" }
+      ]
+    },
     "fs:allow-create",
     "fs:allow-remove",
     "fs:allow-rename",
@@ -18,25 +33,7 @@
     "fs:allow-mkdir",
     {
       "identifier": "fs:scope",
-      "allow": [
-        "$HOME/**",
-        "$DESKTOP/**",
-        "$DOCUMENT/**",
-        "$DOWNLOAD/**",
-        "$PICTURE/**",
-        "$PUBLIC/**",
-        "$VIDEO/**",
-        "$APPDATA/**",
-        "$APPCONFIG/**",
-        "$APPDATA/**",
-        "$APPLOCALDATA/**",
-        "$APPCACHE/**",
-        "$APPLOG/**",
-        "/Users/**",
-        "/home/**",
-        "/tmp/**",
-        "/var/tmp/**"
-      ]
+      "allow": ["**"]
     },
     "shell:default",
     "shell:allow-execute",

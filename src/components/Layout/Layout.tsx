@@ -115,7 +115,7 @@ export const Layout: React.FC = () => {
   return (
     <div className="ide-layout">
       <div className="ide-header">
-        <h1>Tauri IDE</h1>
+        <h1>Cody Editor</h1>
         <button className="open-folder-btn" onClick={handleOpenFolder}>
           <FolderOpen size={16} />
           <span>New Project</span>
