@@ -72,3 +72,46 @@
 .allotment-module_split-view-view__MGZ5O {
   overflow: hidden;
 }
+
+/* AI Container Styles */
+.ai-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+}
+
+.ai-mode-toggle {
+  display: flex;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  padding: 5px;
+  gap: 5px;
+}
+
+.ai-mode-btn {
+  flex: 1;
+  padding: 6px 12px;
+  background-color: transparent;
+  color: #858585;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-mode-btn:hover {
+  background-color: #3c3c3c;
+  color: #cccccc;
+}
+
+.ai-mode-btn.active {
+  background-color: #0e639c;
+  color: white;
+  border-color: #0e639c;
+}
+
+.ai-mode-btn.active:hover {
+  background-color: #1177bb;
+}

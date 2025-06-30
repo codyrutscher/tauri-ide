@@ -1,0 +1,261 @@
+.workflow-builder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  color: #cccccc;
+}
+
+.workflow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+}
+
+.workflow-name {
+  flex: 1;
+  padding: 6px 10px;
+  background-color: #3c3c3c;
+  border: 1px solid #3e3e42;
+  color: #cccccc;
+  border-radius: 3px;
+  font-size: 14px;
+  margin-right: 15px;
+}
+
+.workflow-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.workflow-btn {
+  padding: 6px 12px;
+  background-color: #3c3c3c;
+  color: #cccccc;
+  border: 1px solid #3e3e42;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.workflow-btn:hover {
+  background-color: #484848;
+}
+
+.workflow-btn-primary {
+  background-color: #0e639c;
+  color: white;
+  border-color: #0e639c;
+}
+
+.workflow-btn-primary:hover {
+  background-color: #1177bb;
+}
+
+.workflow-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.workflow-sidebar {
+  width: 250px;
+  background-color: #252526;
+  border-right: 1px solid #3e3e42;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.workflow-sidebar h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 15px 0;
+  color: #cccccc;
+}
+
+.node-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.node-type-btn {
+  padding: 8px 12px;
+  background-color: #3c3c3c;
+  color: #cccccc;
+  border: 1px solid #3e3e42;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.node-type-btn:hover {
+  background-color: #484848;
+  border-color: #007acc;
+}
+
+.node-properties {
+  margin-top: 30px;
+}
+
+.properties-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.properties-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #cccccc;
+}
+
+.properties-form input {
+  padding: 6px 8px;
+  background-color: #3c3c3c;
+  border: 1px solid #3e3e42;
+  color: #cccccc;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.delete-btn {
+  padding: 6px 10px;
+  background-color: #5a1d1d;
+  color: #f48771;
+  border: 1px solid #914242;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.delete-btn:hover {
+  background-color: #6e2020;
+  border-color: #f48771;
+}
+
+.workflow-canvas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  position: relative;
+}
+
+.workflow-svg {
+  flex: 1;
+  width: 100%;
+  min-height: 400px;
+  background-color: #1e1e1e;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, #2a2a2a 25%, #2a2a2a 26%, transparent 27%, transparent 74%, #2a2a2a 75%, #2a2a2a 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, #2a2a2a 25%, #2a2a2a 26%, transparent 27%, transparent 74%, #2a2a2a 75%, #2a2a2a 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+}
+
+.workflow-node {
+  fill: #3c3c3c;
+  stroke: #3e3e42;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.workflow-node:hover {
+  fill: #484848;
+  stroke: #007acc;
+}
+
+.workflow-node.selected {
+  stroke: #007acc;
+  stroke-width: 3;
+}
+
+.workflow-node.llm {
+  fill: #0e639c;
+}
+
+.workflow-node.tool {
+  fill: #388a34;
+}
+
+.workflow-node.conditional {
+  fill: #854cc7;
+}
+
+.workflow-node.human {
+  fill: #d67e00;
+}
+
+.node-label {
+  fill: #cccccc;
+  font-size: 12px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.entry-point {
+  fill: #0dbc79;
+  stroke: #0dbc79;
+  stroke-width: 2;
+}
+
+.workflow-edge {
+  stroke: #3e3e42;
+  stroke-width: 2;
+  fill: none;
+  cursor: pointer;
+  transition: stroke 0.2s;
+}
+
+.workflow-edge:hover {
+  stroke: #007acc;
+}
+
+.workflow-edge.selected {
+  stroke: #007acc;
+  stroke-width: 3;
+}
+
+.workflow-description {
+  padding: 15px;
+  background-color: #252526;
+  border-top: 1px solid #3e3e42;
+}
+
+.workflow-description textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 10px;
+  background-color: #3c3c3c;
+  border: 1px solid #3e3e42;
+  color: #cccccc;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.workflow-description textarea:focus {
+  outline: none;
+  border-color: #007acc;
+}

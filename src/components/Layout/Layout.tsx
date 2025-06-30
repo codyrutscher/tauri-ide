@@ -8,6 +8,9 @@ import { EditorComponent } from '../Editor/Editor';
 import { Terminal } from '../Terminal/PtyTerminal';
 import { AIChat } from '../AI/AIChat';
 import { ThemeSelector, EditorTheme } from '../ThemeSelector/ThemeSelector';
+// Import polyfill before LangGraphChat
+import '../../langgraph/polyfills/async-local-storage';
+import { LangGraphChat } from '../../langgraph/components/LangGraphChat';
 import './Layout.css';
 
 export const Layout: React.FC = () => {
@@ -15,6 +18,16 @@ export const Layout: React.FC = () => {
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
   const [fileTreeRefreshTrigger, setFileTreeRefreshTrigger] = useState(0);
   const [editorTheme, setEditorTheme] = useState<EditorTheme>('vs-dark');
+  const [aiMode, setAiMode] = useState<'chat' | 'langgraph'>('chat');
+  const [apiKey, setApiKey] = useState<string>('');
+
+  // Load Claude API key from localStorage
+  useEffect(() => {
+    const savedKey = localStorage.getItem('anthropic_api_key');
+    if (savedKey) {
+      setApiKey(savedKey);
+    }
+  }, []);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -160,11 +173,35 @@ export const Layout: React.FC = () => {
                 </Allotment>
               </Allotment.Pane>
               <Allotment.Pane>
-                <AIChat 
-                  selectedCode="" 
-                  rootPath={currentFolder}
-                  selectedFile={selectedFile}
-                />
+                <div className="ai-container">
+                  <div className="ai-mode-toggle">
+                    <button
+                      className={`ai-mode-btn ${aiMode === 'chat' ? 'active' : ''}`}
+                      onClick={() => setAiMode('chat')}
+                    >
+                      AI Chat
+                    </button>
+                    <button
+                      className={`ai-mode-btn ${aiMode === 'langgraph' ? 'active' : ''}`}
+                      onClick={() => setAiMode('langgraph')}
+                    >
+                      LangGraph
+                    </button>
+                  </div>
+                  {aiMode === 'chat' ? (
+                    <AIChat 
+                      selectedCode="" 
+                      rootPath={currentFolder}
+                      selectedFile={selectedFile}
+                    />
+                  ) : (
+                    <LangGraphChat
+                      apiKey={apiKey}
+                      currentFile={selectedFile}
+                      projectPath={currentFolder}
+                    />
+                  )}
+                </div>
               </Allotment.Pane>
             </Allotment>
           </Allotment.Pane>
