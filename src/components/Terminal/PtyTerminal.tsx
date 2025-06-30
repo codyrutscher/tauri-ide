@@ -8,6 +8,7 @@ import './Terminal.css';
 
 interface TerminalProps {
   workingDirectory?: string | null;
+  onOutput?: (data: string) => void;
 }
 
 interface PtyOutputPayload {
@@ -15,15 +16,37 @@ interface PtyOutputPayload {
   data: string;
 }
 
-export const Terminal: React.FC<TerminalProps> = ({ workingDirectory }) => {
+export const Terminal: React.FC<TerminalProps> = ({ workingDirectory, onOutput }) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<XTerm | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
   const [ptyId, setPtyId] = useState<string | null>(null);
   const unlistenRef = useRef<(() => void) | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (!terminalRef.current || xtermRef.current) return;
+    if (!terminalRef.current) return;
+    
+    // Initialize terminal on first mount or when working directory changes
+    if (!isInitialized || (isInitialized && workingDirectory !== undefined)) {
+      // Clean up existing terminal if already initialized
+      if (xtermRef.current) {
+        const term = xtermRef.current;
+        const id = ptyId;
+        
+        // Clean up old terminal
+        if (unlistenRef.current) {
+          unlistenRef.current();
+          unlistenRef.current = null;
+        }
+        if (id) {
+          invoke('kill_pty', { id }).catch(console.error);
+        }
+        term.dispose();
+        xtermRef.current = null;
+        fitAddonRef.current = null;
+        setPtyId(null);
+      }
 
     const initTerminal = async () => {
       // Create xterm instance
@@ -72,21 +95,27 @@ export const Terminal: React.FC<TerminalProps> = ({ workingDirectory }) => {
       const rows = term.rows;
 
       try {
-        // Spawn PTY
+        // Spawn PTY - use working directory or home directory as fallback
+        console.log('Spawning PTY with working directory:', workingDirectory || 'default');
         const id = await invoke<string>('spawn_pty', {
           shell: null,
-          cwd: workingDirectory,
+          cwd: workingDirectory || null, // null will use default directory
           cols,
           rows,
         });
         
         setPtyId(id);
+        setIsInitialized(true);
         console.log('PTY spawned with id:', id);
 
         // Listen for PTY output
         const unlisten = await listen<PtyOutputPayload>('pty-output', (event) => {
           if (event.payload.id === id) {
             term.write(event.payload.data);
+            // Pass output to parent component for file system monitoring
+            if (onOutput) {
+              onOutput(event.payload.data);
+            }
           }
         });
         unlistenRef.current = unlisten;
@@ -103,6 +132,16 @@ export const Terminal: React.FC<TerminalProps> = ({ workingDirectory }) => {
         term.onData((data) => {
           if (id) {
             invoke('write_to_pty', { id, data }).catch(console.error);
+            // Also pass user input to detect commands
+            if (onOutput && data.includes('\r')) {
+              // Extract the command from the current line
+              const buffer = term.buffer.active;
+              const currentLine = buffer.getLine(buffer.cursorY);
+              if (currentLine) {
+                const lineText = currentLine.translateToString(true);
+                onOutput(lineText);
+              }
+            }
           }
         });
 
@@ -146,12 +185,13 @@ export const Terminal: React.FC<TerminalProps> = ({ workingDirectory }) => {
       }
     };
 
-    const cleanup = initTerminal();
+      const cleanup = initTerminal();
 
-    return () => {
-      cleanup.then(fn => fn && fn());
-    };
-  }, [workingDirectory]);
+      return () => {
+        cleanup.then(fn => fn && fn());
+      };
+    }
+  }, [workingDirectory, isInitialized]);
 
   return (
     <div className="terminal-container">

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Settings, Bot, User } from 'lucide-react';
 import { fetch } from '@tauri-apps/plugin-http';
 import { MessageRenderer } from './MessageRenderer';
-import { readDir } from '@tauri-apps/plugin-fs';
+import { readDir, readTextFile } from '@tauri-apps/plugin-fs';
 import './AIChat.css';
 
 interface Message {
@@ -15,9 +15,10 @@ interface Message {
 interface AIChatProps {
   selectedCode?: string;
   rootPath?: string | null;
+  selectedFile?: string | null;
 }
 
-export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath }) => {
+export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath, selectedFile }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +50,101 @@ export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath }) => {
     setShowSettings(false);
   };
 
+  // Function to find and read files mentioned in the user's message
+  const findAndReadFiles = async (message: string, rootPath: string): Promise<{ [filename: string]: string }> => {
+    const fileContents: { [filename: string]: string } = {};
+    
+    // Common file extensions to look for
+    const fileExtensions = [
+      '.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.h', '.cs', 
+      '.rb', '.go', '.rs', '.php', '.swift', '.kt', '.scala', '.r', '.m', '.mm',
+      '.html', '.css', '.scss', '.sass', '.less', '.json', '.xml', '.yaml', '.yml',
+      '.md', '.txt', '.sql', '.sh', '.bash', '.zsh', '.fish', '.ps1', '.bat',
+      '.dockerfile', '.dockerignore', '.gitignore', '.env', '.config'
+    ];
+    
+    // Extract potential filenames from the message
+    const words = message.split(/\s+/);
+    const potentialFiles: string[] = [];
+    
+    for (const word of words) {
+      // Check if word contains a file extension
+      for (const ext of fileExtensions) {
+        if (word.toLowerCase().includes(ext)) {
+          // Clean up the word to get just the filename
+          let filename = word.replace(/['"`,;:!?\(\)\[\]{}]/g, '');
+          potentialFiles.push(filename);
+        }
+      }
+    }
+    
+    // Also check if the currently selected file is mentioned
+    if (selectedFile) {
+      const selectedFileName = selectedFile.split('/').pop() || '';
+      if (message.toLowerCase().includes(selectedFileName.toLowerCase())) {
+        potentialFiles.push(selectedFile);
+      }
+    }
+    
+    // Try to read each potential file
+    for (const filename of potentialFiles) {
+      try {
+        let fullPath: string;
+        
+        // If it's already a path from selectedFile, use it directly
+        if (filename === selectedFile) {
+          fullPath = `${rootPath}/${filename}`;
+        } else {
+          // Search for the file in the project
+          const searchResults = await searchForFile(rootPath, filename);
+          if (searchResults.length > 0) {
+            fullPath = searchResults[0];
+          } else {
+            continue;
+          }
+        }
+        
+        const content = await readTextFile(fullPath);
+        const relativePath = fullPath.replace(`${rootPath}/`, '');
+        fileContents[relativePath] = content;
+      } catch (error) {
+        console.error(`Could not read file ${filename}:`, error);
+      }
+    }
+    
+    return fileContents;
+  };
+
+  // Helper function to search for a file in the project
+  const searchForFile = async (rootPath: string, filename: string, currentPath: string = ''): Promise<string[]> => {
+    const results: string[] = [];
+    
+    try {
+      const fullPath = currentPath ? `${rootPath}/${currentPath}` : rootPath;
+      const entries = await readDir(fullPath);
+      
+      for (const entry of entries) {
+        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'target') {
+          continue;
+        }
+        
+        const entryPath = currentPath ? `${currentPath}/${entry.name}` : entry.name;
+        
+        if (entry.isDirectory) {
+          // Recursively search subdirectories
+          const subResults = await searchForFile(rootPath, filename, entryPath);
+          results.push(...subResults);
+        } else if (entry.name.toLowerCase() === filename.toLowerCase() || entry.name.toLowerCase().endsWith(filename.toLowerCase())) {
+          results.push(`${rootPath}/${entryPath}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error searching directory:', error);
+    }
+    
+    return results;
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -72,6 +168,7 @@ export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath }) => {
       // Prepare context with selected code and project info if available
       let context = input;
       let projectContext = '';
+      let fileContext = '';
       
       // Add project structure context if root path is available
       if (rootPath) {
@@ -82,15 +179,30 @@ export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath }) => {
             .map(e => e.isDirectory ? `${e.name}/` : e.name)
             .slice(0, 20);
           projectContext = `\n\nProject root: ${rootPath}\nMain files/folders: ${projectFiles.join(', ')}`;
+          
+          // Find and read files mentioned in the user's message
+          const mentionedFiles = await findAndReadFiles(input, rootPath);
+          
+          if (Object.keys(mentionedFiles).length > 0) {
+            fileContext = '\n\n--- Referenced Files ---\n';
+            for (const [filepath, content] of Object.entries(mentionedFiles)) {
+              // Limit file content to prevent token overflow
+              const truncatedContent = content.length > 3000 
+                ? content.substring(0, 3000) + '\n... (truncated)'
+                : content;
+              
+              fileContext += `\nFile: ${filepath}\n\`\`\`\n${truncatedContent}\n\`\`\`\n`;
+            }
+          }
         } catch (err) {
           console.error('Error reading project structure:', err);
         }
       }
       
       if (selectedCode) {
-        context = `Selected code:\n\`\`\`\n${selectedCode}\n\`\`\`\n\nQuestion: ${input}${projectContext}`;
+        context = `Selected code:\n\`\`\`\n${selectedCode}\n\`\`\`\n\nQuestion: ${input}${projectContext}${fileContext}`;
       } else {
-        context = input + projectContext;
+        context = input + projectContext + fileContext;
       }
 
       // Convert messages to Anthropic format
@@ -114,15 +226,19 @@ export const AIChat: React.FC<AIChatProps> = ({ selectedCode, rootPath }) => {
           messages: anthropicMessages,
           system: `You are a helpful coding assistant integrated into an IDE similar to Cursor. You have access to the user's project files and can help them write, modify, and understand code. 
 
+When the user mentions a file in their message, I will automatically read and include its contents in the context for you to analyze. You can provide specific feedback about the code, identify issues, and suggest improvements.
+
 When providing code examples:
 - Include filenames in code fences like: \`\`\`javascript src/components/Example.tsx
+- Use relative paths from the project root (e.g., "src/components/File.tsx" not "project-name/src/components/File.tsx")
+- Do NOT include the project folder name in file paths
 - Be specific about where files should be created or modified
 - Consider the project structure and existing files when suggesting changes
-- Use appropriate file paths relative to the project root
+- When you see file contents in the context, analyze them thoroughly and provide specific, actionable feedback
 
-Provide clear, concise answers focused on programming and development. When creating new files, ensure they follow the project's existing conventions and structure.`,
+Provide clear, concise answers focused on programming and development. When analyzing files, point out specific issues, bugs, or improvements with line-by-line suggestions when appropriate.`,
           temperature: 0.7,
-          max_tokens: 1000,
+          max_tokens: 4000,
         }),
       });
 
@@ -225,7 +341,10 @@ Provide clear, concise answers focused on programming and development. When crea
             <div className="message-content">
               <div className="message-text">
                 {message.role === 'assistant' ? (
-                  <MessageRenderer content={message.content} rootPath={rootPath || null} />
+                  <MessageRenderer 
+                    content={message.content} 
+                    rootPath={rootPath || null}
+                  />
                 ) : (
                   message.content
                 )}

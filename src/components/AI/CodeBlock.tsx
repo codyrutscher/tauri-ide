@@ -1,27 +1,21 @@
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Copy, Check, FileCode, FolderPlus } from 'lucide-react';
-import { writeTextFile, mkdir } from '@tauri-apps/plugin-fs';
-import { dirname } from '@tauri-apps/api/path';
+import { Copy, Check, FileCode } from 'lucide-react';
 import './CodeBlock.css';
 
 interface CodeBlockProps {
   language?: string;
   value: string;
   filename?: string;
-  rootPath?: string | null;
 }
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({ 
   language = 'text', 
   value, 
-  filename,
-  rootPath 
+  filename
 }) => {
   const [copied, setCopied] = useState(false);
-  const [applied, setApplied] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleCopy = async () => {
     try {
@@ -33,36 +27,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     }
   };
 
-  const handleApply = async () => {
-    if (!filename || !rootPath) {
-      setError('No file path or root directory specified');
-      return;
-    }
-
-    try {
-      const fullPath = `${rootPath}/${filename}`;
-      
-      // Create directory if it doesn't exist
-      const dir = await dirname(fullPath);
-      try {
-        await mkdir(dir, { recursive: true });
-      } catch (e) {
-        // Directory might already exist, that's fine
-      }
-
-      // Write the file
-      await writeTextFile(fullPath, value);
-      
-      setApplied(true);
-      setError(null);
-      setTimeout(() => setApplied(false), 3000);
-    } catch (err) {
-      console.error('Failed to apply code:', err);
-      setError(`Failed to write file: ${err}`);
-    }
-  };
-
-  const canApply = filename && rootPath;
 
   return (
     <div className="code-block-container">
@@ -85,21 +49,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             {copied ? <Check size={14} /> : <Copy size={14} />}
             <span>{copied ? 'Copied!' : 'Copy'}</span>
           </button>
-          {canApply && (
-            <button
-              className={`code-block-btn ${applied ? 'applied' : ''}`}
-              onClick={handleApply}
-              title={`Create/Update ${filename}`}
-            >
-              <FileCode size={14} />
-              <span>{applied ? 'Applied!' : 'Apply'}</span>
-            </button>
-          )}
         </div>
       </div>
-      {error && (
-        <div className="code-block-error">{error}</div>
-      )}
       <div className="code-block-content">
         <SyntaxHighlighter
           language={language}

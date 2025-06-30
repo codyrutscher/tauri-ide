@@ -55,7 +55,6 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, rootP
                 language={language}
                 value={value}
                 filename={filename}
-                rootPath={rootPath}
               />
             );
           }

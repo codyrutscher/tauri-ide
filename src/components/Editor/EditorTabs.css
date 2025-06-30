@@ -1,0 +1,147 @@
+.editor-tabs-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+}
+
+.editor-tabs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  min-height: 35px;
+  padding-right: 8px;
+}
+
+.editor-tabs-list {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #424242 transparent;
+}
+
+.editor-tabs-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.editor-tabs-list::-webkit-scrollbar-thumb {
+  background-color: #424242;
+  border-radius: 3px;
+}
+
+.editor-tab {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #2d2d30;
+  border-right: 1px solid #252526;
+  cursor: pointer;
+  min-width: 120px;
+  max-width: 200px;
+  position: relative;
+  user-select: none;
+}
+
+.editor-tab:hover {
+  background-color: #353537;
+}
+
+.editor-tab.active {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.editor-tab-name {
+  flex: 1;
+  font-size: 13px;
+  color: #cccccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor-tab.active .editor-tab-name {
+  color: #ffffff;
+}
+
+.editor-tab-modified {
+  color: #f48771;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.editor-tab-close {
+  background: none;
+  border: none;
+  color: #858585;
+  padding: 2px;
+  margin-left: 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.editor-tab:hover .editor-tab-close {
+  opacity: 1;
+}
+
+.editor-tab-close:hover {
+  background-color: #5a5a5a;
+  color: #cccccc;
+}
+
+.editor-save-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.editor-save-all-btn:hover:not(:disabled) {
+  background-color: #1177bb;
+}
+
+.editor-save-all-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.editor-save-all-btn.saving {
+  background-color: #d97706;
+}
+
+.editor-save-all-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.editor-tabs-content {
+  flex: 1;
+  overflow: hidden;
+}

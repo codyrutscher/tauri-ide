@@ -25,7 +25,12 @@
   justify-content: space-between;
 }
 
-.file-tree-refresh-btn {
+.file-tree-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.file-tree-action-btn {
   background: none;
   border: none;
   color: #858585;
@@ -38,17 +43,17 @@
   transition: all 0.2s;
 }
 
-.file-tree-refresh-btn:hover:not(:disabled) {
+.file-tree-action-btn:hover:not(:disabled) {
   color: #cccccc;
   background-color: #2a2d2e;
 }
 
-.file-tree-refresh-btn:disabled {
+.file-tree-action-btn:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-.file-tree-refresh-btn .spinning {
+.file-tree-action-btn .spinning {
   animation: spin 1s linear infinite;
 }
 

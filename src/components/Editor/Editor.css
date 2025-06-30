@@ -19,21 +19,60 @@
   color: #cccccc;
   font-size: 13px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-modified-indicator {
+  color: #f48771;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .editor-save-btn {
-  padding: 4px 12px;
+  padding: 6px 12px;
   background-color: #0e639c;
   color: white;
   border: none;
   border-radius: 3px;
   font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.editor-save-btn:hover {
+.editor-save-btn:hover:not(:disabled) {
   background-color: #1177bb;
+}
+
+.editor-save-btn:disabled {
+  background-color: #3c3c3c;
+  color: #858585;
+  cursor: not-allowed;
+}
+
+.editor-save-btn.saving {
+  background-color: #d97706;
+}
+
+.editor-save-btn.saved {
+  background-color: #0dbc79;
+}
+
+.editor-save-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .editor-empty {

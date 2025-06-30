@@ -1,27 +1,42 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { FaSave, FaCheck, FaSpinner } from 'react-icons/fa';
 import './Editor.css';
 
 interface EditorComponentProps {
   filePath: string | null;
   rootPath?: string | null;
   onSave?: (content: string) => void;
+  onModifiedChange?: (filePath: string, isModified: boolean) => void;
 }
 
-export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, rootPath, onSave }) => {
+export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, rootPath, onSave, onModifiedChange }) => {
   const editorRef = useRef<any>(null);
-  const [content, setContent] = React.useState('');
-  const [language, setLanguage] = React.useState('plaintext');
+  const [content, setContent] = useState('');
+  const [originalContent, setOriginalContent] = useState('');
+  const [language, setLanguage] = useState('plaintext');
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [isModified, setIsModified] = useState(false);
 
   useEffect(() => {
     if (filePath) {
       loadFile(filePath);
     } else {
       setContent('');
+      setOriginalContent('');
       setLanguage('plaintext');
+      setIsModified(false);
     }
   }, [filePath, rootPath]);
+
+  useEffect(() => {
+    const modified = content !== originalContent;
+    setIsModified(modified);
+    if (onModifiedChange && filePath) {
+      onModifiedChange(filePath, modified);
+    }
+  }, [content, originalContent, filePath, onModifiedChange]);
 
   const loadFile = async (path: string) => {
     try {
@@ -31,11 +46,21 @@ export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, root
       }
       
       const fullPath = `${rootPath}/${path}`;
+      console.log(`Loading file: ${fullPath}`);
+      
       const fileContent = await readTextFile(fullPath);
       setContent(fileContent);
+      setOriginalContent(fileContent);
       setLanguage(getLanguageFromPath(path));
+      setIsModified(false);
+      
+      console.log(`File loaded successfully: ${path}`);
     } catch (error) {
       console.error('Error loading file:', error);
+      // Try to show a helpful error message
+      setContent(`Error loading file: ${error}\n\nFile path: ${rootPath}/${path}`);
+      setOriginalContent('');
+      setIsModified(false);
     }
   };
 
@@ -71,6 +96,14 @@ export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, root
       'yaml': 'yaml',
       'xml': 'xml',
       'toml': 'toml',
+      'vue': 'vue',
+      'svelte': 'svelte',
+      'dockerfile': 'dockerfile',
+      'gitignore': 'plaintext',
+      'env': 'plaintext',
+      'conf': 'plaintext',
+      'config': 'plaintext',
+      'lock': 'json',
     };
     return languageMap[ext || ''] || 'plaintext';
   };
@@ -87,15 +120,28 @@ export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, root
   const handleSave = async () => {
     if (!filePath || !editorRef.current || !rootPath) return;
     
+    setSaveState('saving');
     const currentContent = editorRef.current.getValue();
+    
     try {
       const fullPath = `${rootPath}/${filePath}`;
       await writeTextFile(fullPath, currentContent);
+      
+      setOriginalContent(currentContent);
+      setIsModified(false);
+      setSaveState('saved');
+      
+      // Show saved state for 2 seconds
+      setTimeout(() => {
+        setSaveState('idle');
+      }, 2000);
+      
       if (onSave) {
         onSave(currentContent);
       }
     } catch (error) {
       console.error('Error saving file:', error);
+      setSaveState('idle');
     }
   };
 
@@ -126,8 +172,24 @@ export const EditorComponent: React.FC<EditorComponentProps> = ({ filePath, root
   return (
     <div className="editor-container">
       <div className="editor-header">
-        <span className="editor-filename">{filePath.split('/').pop()}</span>
-        <button className="editor-save-btn" onClick={handleSave}>Save</button>
+        <span className="editor-filename">
+          {filePath.split('/').pop()}
+          {isModified && <span className="editor-modified-indicator">●</span>}
+        </span>
+        <button 
+          className={`editor-save-btn ${saveState}`} 
+          onClick={handleSave}
+          disabled={saveState === 'saving' || !isModified}
+        >
+          {saveState === 'saving' && <FaSpinner className="spinning" size={12} />}
+          {saveState === 'saved' && <FaCheck size={12} />}
+          {saveState === 'idle' && <FaSave size={12} />}
+          <span>
+            {saveState === 'saving' ? 'Saving...' : 
+             saveState === 'saved' ? 'Saved!' : 
+             'Save'}
+          </span>
+        </button>
       </div>
       <Editor
         height="calc(100% - 40px)"
