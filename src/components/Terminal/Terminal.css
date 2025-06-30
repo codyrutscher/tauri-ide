@@ -1,0 +1,40 @@
+.terminal-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.terminal-clear-btn {
+  padding: 4px 10px;
+  background-color: transparent;
+  color: #858585;
+  border: 1px solid #3e3e42;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.terminal-clear-btn:hover {
+  color: #cccccc;
+  border-color: #858585;
+}
+
+.terminal-content {
+  flex: 1;
+  padding: 10px;
+  overflow: hidden;
+}

@@ -1,0 +1,114 @@
+.file-tree {
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #cccccc;
+  font-size: 13px;
+  overflow: auto;
+  user-select: none;
+}
+
+.file-tree-header {
+  padding: 10px 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #2d2d2d;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-tree-header-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file-tree-refresh-btn {
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.file-tree-refresh-btn:hover:not(:disabled) {
+  color: #cccccc;
+  background-color: #2a2d2e;
+}
+
+.file-tree-refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.file-tree-refresh-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.file-tree-path {
+  font-size: 10px;
+  color: #858585;
+  text-transform: none;
+  font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-tree-content {
+  padding: 5px 0;
+}
+
+.file-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tree-item:hover {
+  background-color: #2a2d2e;
+}
+
+.file-tree-item svg {
+  flex-shrink: 0;
+}
+
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tree-loading {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.file-tree-empty {
+  padding: 20px;
+  text-align: center;
+  color: #858585;
+  font-size: 12px;
+  line-height: 1.5;
+}

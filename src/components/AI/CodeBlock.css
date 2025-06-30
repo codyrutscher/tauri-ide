@@ -1,0 +1,96 @@
+.code-block-container {
+  margin: 8px 0;
+  border: 1px solid #3e3e42;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #1e1e1e;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  font-size: 12px;
+}
+
+.code-block-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #858585;
+}
+
+.code-block-filename {
+  color: #cccccc;
+  font-weight: 500;
+}
+
+.code-block-language {
+  color: #858585;
+  font-size: 11px;
+  text-transform: lowercase;
+}
+
+.code-block-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.code-block-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: transparent;
+  color: #858585;
+  border: 1px solid #3e3e42;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.code-block-btn:hover {
+  color: #cccccc;
+  border-color: #858585;
+  background-color: #2a2d2e;
+}
+
+.code-block-btn.applied {
+  color: #4ec9b0;
+  border-color: #4ec9b0;
+}
+
+.code-block-error {
+  padding: 8px 12px;
+  background-color: #5a1d1d;
+  color: #f48771;
+  font-size: 12px;
+}
+
+.code-block-content {
+  max-height: 400px;
+  overflow: auto;
+}
+
+/* Custom scrollbar for code blocks */
+.code-block-content::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.code-block-content::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.code-block-content::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 5px;
+}
+
+.code-block-content::-webkit-scrollbar-thumb:hover {
+  background: #4e4e4e;
+}
